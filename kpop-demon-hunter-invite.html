@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RUMI — GOLDEN · KPOP Demon Hunters Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Noto+Serif+KR:wght@300;400;700;900&family=Noto+Sans+KR:wght@100;300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #FFD700;
+  --gold2: #FFA520;
+  --dark: #030308;
+  --teal: #00FFCC;
+  --lilac: #d4a0ff;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; overflow-x:hidden; background:var(--dark); font-family:'Noto Sans KR',sans-serif; }
+
+.screen { display:none; min-height:100vh; width:100%; position:relative; }
+.screen.active { display:flex; flex-direction:column; align-items:center; justify-content:center; }
+
+canvas#bgCanvas { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+
+/* ========== INTRO ========== */
+#intro {
+  background: radial-gradient(ellipse at 50% 25%, #1a0035 0%, #08001a 50%, #030308 100%);
+  overflow:hidden; padding: 20px;
+}
+.moon {
+  position:absolute; top:6vh; left:50%; transform:translateX(-50%);
+  width:clamp(140px,18vw,220px); height:clamp(140px,18vw,220px); border-radius:50%;
+  background: radial-gradient(circle at 38% 35%, #ffe680 0%, #ffaa00 40%, #cc4400 75%, #660000 100%);
+  box-shadow: 0 0 80px 30px rgba(255,120,0,.35), 0 0 160px 60px rgba(180,0,0,.2);
+  animation: moonPulse 5s ease-in-out infinite; z-index:1;
+}
+.moon::after { content:''; position:absolute; inset:0; border-radius:50%;
+  background: radial-gradient(circle at 62% 30%, rgba(255,255,200,.25), transparent 55%); }
+@keyframes moonPulse {
+  0%,100% { box-shadow:0 0 80px 30px rgba(255,120,0,.35),0 0 160px 60px rgba(180,0,0,.2); }
+  50% { box-shadow:0 0 100px 40px rgba(255,160,0,.5),0 0 200px 80px rgba(200,0,0,.3); }
+}
+.mountains { position:absolute; bottom:0; left:0; width:100%; height:45vh; pointer-events:none; z-index:1; }
+.petal { position:fixed; pointer-events:none; font-size:16px; animation:petalFall linear infinite; opacity:0; z-index:2; }
+@keyframes petalFall {
+  0% { transform:translateY(-5vh) rotate(0deg); opacity:0; }
+  8% { opacity:.8; } 92% { opacity:.3; }
+  100% { transform:translateY(105vh) rotate(540deg) translateX(60px); opacity:0; }
+}
+.intro-wrap {
+  position:relative; z-index:5; text-align:center;
+  margin-top:clamp(160px,22vh,260px); padding:0 20px; animation:fadeUp .8s ease both;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);} }
+.eyebrow { font-size:10px; letter-spacing:8px; color:var(--gold); text-transform:uppercase; opacity:.6; margin-bottom:8px; }
+.title-huntrix { font-family:'Cinzel Decorative',cursive; font-size:clamp(12px,2.5vw,18px); color:var(--lilac); letter-spacing:6px; opacity:.7; margin-bottom:6px; }
+.title-golden {
+  font-family:'Cinzel Decorative',cursive; font-size:clamp(52px,12vw,120px); font-weight:900;
+  background: linear-gradient(160deg, #fff5a0 0%, #FFD700 30%, #FF8C00 60%, #FFD700 85%, #fff0a0 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter: drop-shadow(0 0 40px rgba(255,180,0,.5)); line-height:1;
+  animation:goldShimmer 4s ease infinite; background-size:200% 100%;
+}
+@keyframes goldShimmer { 0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;} }
+.title-rumi { font-family:'Noto Serif KR',serif; font-size:clamp(14px,3vw,24px); color:var(--gold); letter-spacing:5px; margin:6px 0 4px; opacity:.8; }
+.title-korean { font-family:'Noto Serif KR',serif; font-size:clamp(11px,2vw,16px); color:rgba(255,200,100,.5); letter-spacing:4px; }
+.rumi-stage { margin:30px auto 20px; position:relative; width:clamp(200px,35vw,320px); cursor:pointer; }
+.rumi-stage:hover .rumi-glow { opacity:1; }
+.rumi-glow { position:absolute; inset:-20%; border-radius:50%; background:radial-gradient(circle,rgba(255,200,0,.25),transparent 65%); opacity:.5; transition:opacity .4s; pointer-events:none; animation:rumiAura 3s ease-in-out infinite; }
+@keyframes rumiAura { 0%,100%{transform:scale(1);}50%{transform:scale(1.08);} }
+.rumi-stage svg { width:100%; height:auto; }
+.demon-mark { transition:opacity .3s; }
+.rumi-stage:hover .demon-mark { opacity:1 !important; }
+.char-tip { font-size:10px; letter-spacing:3px; color:rgba(255,215,0,.4); text-align:center; margin-top:6px; }
+.cta-btn {
+  display:inline-block; position:relative; background:transparent; border:1.5px solid var(--gold);
+  color:var(--gold); font-family:'Cinzel Decorative',cursive; font-size:clamp(10px,1.8vw,13px);
+  letter-spacing:4px; padding:16px 44px; cursor:pointer; overflow:hidden;
+  clip-path:polygon(12px 0,100% 0,calc(100% - 12px) 100%,0 100%); transition:color .3s; margin-top:10px;
+}
+.cta-btn::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,var(--gold),var(--gold2)); transform:translateX(-105%); transition:transform .4s ease; }
+.cta-btn:hover::before { transform:translateX(0); }
+.cta-btn:hover { color:var(--dark); }
+.cta-btn span { position:relative; z-index:1; }
+.band-row { display:flex; gap:20px; justify-content:center; margin:16px 0 8px; flex-wrap:wrap; }
+.band-chip { font-family:'Noto Sans KR',sans-serif; font-size:10px; letter-spacing:3px; color:rgba(255,255,255,.4); border:1px solid rgba(255,255,255,.15); padding:5px 14px; border-radius:20px; cursor:pointer; transition:all .25s; }
+.band-chip:hover { color:var(--gold); border-color:var(--gold); }
+
+/* ========== GAME ========== */
+#game { background:radial-gradient(ellipse at 50% 10%,#1a0030 0%,#050010 60%,#030308 100%); padding:20px 16px 40px; }
+.game-header { text-align:center; position:relative; z-index:5; width:100%; max-width:700px; margin-bottom:14px; }
+.game-header h2 { font-family:'Cinzel Decorative',cursive; font-size:clamp(14px,3.5vw,26px); color:var(--gold); letter-spacing:3px; filter:drop-shadow(0 0 10px rgba(255,215,0,.4)); }
+.game-header p { font-size:10px; color:rgba(255,255,255,.35); letter-spacing:3px; margin-top:4px; }
+.stage-wrap { width:100%; max-width:700px; height:clamp(140px,22vw,200px); position:relative; margin-bottom:16px; z-index:5; }
+#stageCanvas { width:100%; height:100%; border-radius:4px; }
+.lyrics-box { width:100%; max-width:700px; position:relative; z-index:5; background:rgba(0,0,0,.65); border:1px solid rgba(255,215,0,.18); padding:22px 24px 18px; border-radius:3px; overflow:hidden; }
+.lyrics-box::before { content:''; position:absolute; top:0; left:-100%; right:100%; height:2px; background:linear-gradient(90deg,transparent,var(--gold),transparent); animation:scanLine 3s linear infinite; }
+@keyframes scanLine { to { left:100%; right:-100%; } }
+.lyric-line { font-family:'Noto Serif KR',serif; font-size:clamp(14px,2.8vw,22px); color:rgba(255,255,255,.2); line-height:1.9; margin:2px 0; transition:all .4s ease; }
+.lyric-line.active { color:var(--gold); filter:drop-shadow(0 0 10px rgba(255,215,0,.6)); font-size:clamp(16px,3.2vw,26px); font-weight:700; }
+.lyric-line.done { color:rgba(255,165,0,.35); }
+.lyric-line .kor { font-size:.62em; display:block; color:rgba(255,200,100,.5); letter-spacing:2px; }
+.prog-wrap { width:100%; max-width:700px; z-index:5; margin-top:12px; }
+.prog-label { font-size:10px; letter-spacing:3px; color:rgba(255,215,0,.45); text-align:center; margin-bottom:6px; }
+.prog-bar { height:3px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; }
+.prog-fill { height:100%; width:0%; background:linear-gradient(90deg,#8B0000,#FFD700); border-radius:2px; transition:width .5s ease; }
+.tokens { display:flex; gap:12px; justify-content:center; margin-top:12px; }
+.token { width:34px; height:34px; border-radius:50%; border:1.5px solid rgba(255,215,0,.2); display:flex; align-items:center; justify-content:center; font-size:15px; opacity:.25; transition:all .5s; }
+.token.lit { opacity:1; border-color:var(--gold); box-shadow:0 0 18px rgba(255,215,0,.5); animation:tokenPulse 2.5s ease infinite; }
+@keyframes tokenPulse { 0%,100%{box-shadow:0 0 18px rgba(255,215,0,.5);}50%{box-shadow:0 0 30px rgba(255,180,0,.8);} }
+.mic-wrap { width:100%; max-width:700px; z-index:5; text-align:center; margin-top:16px; }
+.mic-outer { display:inline-block; position:relative; }
+.mic-ring { position:absolute; inset:-14px; border-radius:50%; border:1.5px solid var(--teal); opacity:0; animation:ringPulse 1.8s ease-out infinite; display:none; }
+.mic-ring:nth-child(2){animation-delay:.6s;} .mic-ring:nth-child(3){animation-delay:1.2s;}
+.mic-btn.on .mic-ring { display:block; }
+@keyframes ringPulse { from{transform:scale(.7);opacity:.7;}to{transform:scale(2.2);opacity:0;} }
+.mic-btn { width:72px; height:72px; border-radius:50%; border:2px solid var(--gold); background:rgba(0,0,0,.85); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all .3s; box-shadow:0 0 20px rgba(255,215,0,.15); position:relative; z-index:1; }
+.mic-btn.on { border-color:var(--teal); box-shadow:0 0 30px rgba(0,255,204,.4); animation:micGlow 1.2s ease-in-out infinite; }
+@keyframes micGlow { 0%,100%{transform:scale(1);}50%{transform:scale(1.07);} }
+.vol-bars { display:flex; gap:3px; justify-content:center; align-items:flex-end; height:36px; margin-top:12px; }
+.vol-bar { width:5px; background:var(--gold); border-radius:3px; min-height:3px; transition:height .05s; }
+#micStatus { font-size:11px; letter-spacing:3px; margin-top:8px; color:rgba(255,215,0,.45); }
+.hint { font-size:10px; color:rgba(255,255,255,.25); letter-spacing:2px; text-align:center; margin-top:8px; }
+.line-timer { height:2px; background:rgba(255,215,0,.08); border-radius:2px; margin-top:8px; overflow:hidden; width:100%; }
+.line-timer-fill { height:100%; width:0%; background:var(--teal); border-radius:2px; transition:width .1s linear; }
+
+/* ========== VICTORY ========== */
+#victory { background:radial-gradient(ellipse at 50% 40%,#1a0800 0%,#050000 100%); padding:40px 20px; }
+#fxCanvas { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+.v-wrap { position:relative; z-index:5; text-align:center; width:100%; max-width:580px; }
+.v-eyebrow { font-size:10px; letter-spacing:6px; color:rgba(255,215,0,.5); margin-bottom:14px; }
+.v-title { font-family:'Cinzel Decorative',cursive; font-size:clamp(26px,7vw,64px); background:linear-gradient(135deg,#fff5a0,#FFD700,#FF8C00,#FFD700,#fff0a0); background-size:200% 100%; -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 30px rgba(255,165,0,.4)); animation:goldShimmer 3s ease infinite; }
+.v-sub { font-family:'Noto Serif KR',serif; font-size:clamp(13px,2vw,17px); color:rgba(255,165,0,.6); letter-spacing:3px; margin:8px 0 30px; }
+.invite-card { background:rgba(15,3,0,.92); border:1px solid rgba(255,215,0,.35); padding:clamp(24px,4vw,40px); clip-path:polygon(14px 0,100% 0,calc(100% - 14px) 100%,0 100%); position:relative; }
+.invite-card::before,.invite-card::after { content:''; position:absolute; width:50px; height:50px; border:1.5px solid var(--gold); opacity:.4; }
+.invite-card::before{top:-1px;left:-1px;border-right:none;border-bottom:none;}
+.invite-card::after{bottom:-1px;right:-1px;border-left:none;border-top:none;}
+.invite-body { font-family:'Noto Serif KR',serif; font-size:clamp(13px,2vw,16px); color:rgba(255,240,220,.82); line-height:1.95; }
+.gold { color:var(--gold); font-weight:700; font-size:1.12em; }
+.dimgold { color:rgba(255,165,0,.6); font-size:.9em; }
+.seal-svg { width:90px; height:90px; margin:24px auto 0; display:block; }
+.code-box { font-family:'Cinzel Decorative',cursive; font-size:clamp(13px,2vw,17px); color:var(--gold); letter-spacing:5px; border:1px solid rgba(255,215,0,.3); display:inline-block; padding:12px 28px; margin-top:18px; }
+.back-btn { margin-top:28px; display:inline-block; font-family:'Cinzel Decorative',cursive; font-size:11px; letter-spacing:3px; color:rgba(255,215,0,.5); background:none; border:1px solid rgba(255,215,0,.3); padding:12px 30px; cursor:pointer; clip-path:polygon(8px 0,100% 0,calc(100% - 8px) 100%,0 100%); transition:all .3s; }
+.back-btn:hover { color:var(--gold); border-color:var(--gold); }
+.rune { position:fixed; pointer-events:none; font-family:'Noto Serif KR',serif; font-size:18px; color:rgba(255,215,0,.07); z-index:1; animation:runeFloat linear infinite; }
+@keyframes runeFloat { from{transform:translateY(105vh) rotate(0deg);opacity:0;}8%{opacity:1;}92%{opacity:.4;}to{transform:translateY(-10vh) rotate(360deg);opacity:0;} }
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+
+<!-- ======= INTRO ======= -->
+<div id="intro" class="screen active">
+  <div class="moon"></div>
+  <svg class="mountains" viewBox="0 0 1400 500" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="mfar" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a0030"/><stop offset="100%" stop-color="#05000f"/></linearGradient>
+      <linearGradient id="mnear" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0a0018"/><stop offset="100%" stop-color="#030308"/></linearGradient>
+    </defs>
+    <polygon points="0,500 150,100 320,200 500,60 680,180 860,50 1040,150 1220,80 1400,120 1400,500" fill="url(#mfar)"/>
+    <polygon points="0,500 80,240 250,320 440,140 640,280 820,120 1000,240 1180,160 1350,200 1400,180 1400,500" fill="url(#mnear)"/>
+    <g transform="translate(700,100)" fill="#07000e">
+      <rect x="-3" y="0" width="6" height="130"/>
+      <polygon points="-28,35 28,35 0,8"/>
+      <polygon points="-22,62 22,62 0,40"/>
+      <polygon points="-16,84 16,84 0,65"/>
+      <rect x="-14" y="84" width="28" height="46"/>
+      <ellipse cx="-20" cy="38" rx="4" ry="6" fill="rgba(255,80,0,.3)"/>
+      <ellipse cx="20" cy="38" rx="4" ry="6" fill="rgba(255,80,0,.3)"/>
+    </g>
+    <g fill="#060010">
+      <polygon points="40,500 55,390 70,500"/><polygon points="45,465 55,370 65,465"/>
+      <polygon points="110,500 130,380 150,500"/><polygon points="115,460 130,360 145,460"/>
+      <polygon points="1250,500 1270,385 1290,500"/><polygon points="1255,462 1270,365 1285,462"/>
+      <polygon points="1330,500 1350,400 1370,500"/>
+    </g>
+  </svg>
+
+  <div class="intro-wrap">
+    <div class="eyebrow">✦ A SPECIAL INVITATION · 특별 초대장 ✦</div>
+    <div class="title-huntrix">HUNTRIX · HUNTR/X</div>
+    <div class="title-golden">GOLDEN</div>
+    <div class="title-rumi">RUMI · 루미</div>
+    <div class="title-korean">강루미 · Kang Rumi · Half-Demon · Main Vocalist</div>
+
+    <div class="rumi-stage" onclick="rumiSings()" id="rumiChar">
+      <div class="rumi-glow"></div>
+      <svg viewBox="0 0 280 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="rumiAura2" cx="50%" cy="80%" r="60%">
+            <stop offset="0%" stop-color="rgba(255,200,0,0.18)"/><stop offset="100%" stop-color="transparent"/>
+          </radialGradient>
+          <radialGradient id="skinGrad" cx="40%" cy="35%" r="60%">
+            <stop offset="0%" stop-color="#f7d5b0"/><stop offset="100%" stop-color="#e8b88a"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="140" cy="370" rx="90" ry="14" fill="url(#rumiAura2)"/>
+        <ellipse cx="140" cy="370" rx="60" ry="8" fill="rgba(255,200,0,0.12)"/>
+        <!-- Demon marks -->
+        <path class="demon-mark" d="M 105 180 Q 95 200 100 220 Q 108 225 115 210 Q 118 195 105 180" fill="none" stroke="rgba(180,0,80,0.55)" stroke-width="2.5" opacity="0.7"/>
+        <path class="demon-mark" d="M 170 175 Q 180 195 177 215 Q 169 222 163 208 Q 161 193 170 175" fill="none" stroke="rgba(180,0,80,0.55)" stroke-width="2.5" opacity="0.7"/>
+        <!-- Skirt -->
+        <path d="M 82 190 Q 55 250 60 360 Q 140 380 220 360 Q 225 250 198 190 Z" fill="#1a0008"/>
+        <path d="M 82 190 Q 55 250 60 360 Q 140 380 220 360 Q 225 250 198 190 Z" fill="none" stroke="rgba(255,215,0,0.25)" stroke-width="1.5"/>
+        <path d="M 108 190 Q 90 245 95 360 Q 140 375 140 375 Q 140 375 140 190 Z" fill="rgba(120,0,20,0.6)"/>
+        <path d="M 172 190 Q 190 245 185 360 Q 140 375 140 375 Q 140 375 140 190 Z" fill="rgba(120,0,20,0.4)"/>
+        <rect x="78" y="215" width="124" height="10" rx="3" fill="rgba(255,215,0,0.7)"/>
+        <!-- Bodice -->
+        <rect x="88" y="158" width="104" height="40" rx="8" fill="#0d0005"/>
+        <rect x="88" y="158" width="104" height="40" rx="8" fill="none" stroke="rgba(255,215,0,0.3)" stroke-width="1"/>
+        <path d="M 110 168 Q 140 180 170 168" stroke="rgba(255,215,0,0.5)" stroke-width="2" fill="none"/>
+        <circle cx="140" cy="172" r="4" fill="rgba(255,215,0,0.4)"/>
+        <!-- Arms -->
+        <rect x="56" y="155" width="34" height="16" rx="8" fill="#0d0005" transform="rotate(-25,73,163)"/>
+        <rect x="190" y="155" width="34" height="16" rx="8" fill="#0d0005" transform="rotate(25,207,163)"/>
+        <ellipse cx="52" cy="185" rx="12" ry="22" fill="url(#skinGrad)" transform="rotate(-15,52,185)"/>
+        <ellipse cx="228" cy="185" rx="12" ry="22" fill="url(#skinGrad)" transform="rotate(15,228,185)"/>
+        <!-- Mic -->
+        <line x1="218" y1="175" x2="236" y2="148" stroke="#aaa" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="238" cy="143" rx="8" ry="10" fill="#888"/>
+        <ellipse cx="238" cy="143" rx="5" ry="6.5" fill="#aaa"/>
+        <ellipse id="micGlowEl" cx="238" cy="143" rx="12" ry="14" fill="none" stroke="rgba(255,215,0,0)" stroke-width="2" opacity="0"/>
+        <!-- Neck -->
+        <rect x="127" y="132" width="26" height="28" rx="8" fill="url(#skinGrad)"/>
+        <!-- Head -->
+        <ellipse cx="140" cy="108" rx="44" ry="48" fill="url(#skinGrad)"/>
+        <!-- Purple hair -->
+        <ellipse cx="140" cy="78" rx="48" ry="32" fill="#3d006e"/>
+        <path d="M 96 90 Q 82 72 88 55 Q 95 65 96 90" fill="#3d006e"/>
+        <path d="M 184 90 Q 198 72 192 55 Q 185 65 184 90" fill="#3d006e"/>
+        <ellipse cx="98" cy="100" rx="14" ry="30" fill="#3d006e"/>
+        <ellipse cx="182" cy="100" rx="14" ry="30" fill="#3d006e"/>
+        <ellipse cx="120" cy="70" rx="16" ry="8" fill="rgba(150,50,255,0.4)"/>
+        <rect x="155" y="62" width="18" height="5" rx="2" fill="rgba(255,215,0,0.7)"/>
+        <circle cx="155" cy="64" r="3" fill="#FFD700"/>
+        <!-- Eyes -->
+        <ellipse cx="118" cy="108" rx="11" ry="13" fill="#1a0820"/>
+        <ellipse cx="162" cy="108" rx="11" ry="13" fill="#1a0820"/>
+        <ellipse cx="118" cy="109" rx="7" ry="8" fill="#4d0090"/>
+        <ellipse cx="162" cy="109" rx="7" ry="8" fill="#4d0090"/>
+        <ellipse cx="118" cy="109" rx="4" ry="5" fill="#2a0060"/>
+        <ellipse cx="162" cy="109" rx="4" ry="5" fill="#2a0060"/>
+        <ellipse id="eyeGlow1" cx="118" cy="109" rx="11" ry="13" fill="none" stroke="rgba(200,0,100,0)" stroke-width="1.5"/>
+        <ellipse id="eyeGlow2" cx="162" cy="109" rx="11" ry="13" fill="none" stroke="rgba(200,0,100,0)" stroke-width="1.5"/>
+        <circle cx="121" cy="104" r="2.5" fill="rgba(255,255,255,0.9)"/>
+        <circle cx="165" cy="104" r="2.5" fill="rgba(255,255,255,0.9)"/>
+        <path d="M 107 100 Q 110 95 118 97 Q 126 95 129 100" stroke="#2a0050" stroke-width="1.5" fill="none"/>
+        <path d="M 151 100 Q 154 95 162 97 Q 170 95 173 100" stroke="#2a0050" stroke-width="1.5" fill="none"/>
+        <!-- Lips -->
+        <path d="M 126 130 Q 132 126 140 127 Q 148 126 154 130 Q 148 137 140 138 Q 132 137 126 130 Z" fill="#cc2244"/>
+        <!-- Boots -->
+        <rect x="102" y="348" width="32" height="28" rx="4" fill="#0d0005"/>
+        <rect x="146" y="348" width="32" height="28" rx="4" fill="#0d0005"/>
+        <rect x="98" y="365" width="40" height="16" rx="4" fill="#1a000a"/>
+        <rect x="142" y="365" width="40" height="16" rx="4" fill="#1a000a"/>
+        <rect x="98" y="375" width="40" height="3" rx="1" fill="rgba(255,215,0,.4)"/>
+        <rect x="142" y="375" width="40" height="3" rx="1" fill="rgba(255,215,0,.4)"/>
+        <!-- Floating notes -->
+        <text x="42" y="150" font-size="20" fill="rgba(255,215,0,0.25)" font-family="serif">♪</text>
+        <text x="220" y="155" font-size="18" fill="rgba(255,215,0,0.2)" font-family="serif">♫</text>
+        <text x="55" y="280" font-size="14" fill="rgba(255,215,0,0.15)" font-family="serif">♬</text>
+      </svg>
+    </div>
+    <div class="char-tip">✦ CLICK RUMI TO HEAR HER SING ✦</div>
+    <div class="band-row">
+      <div class="band-chip" onclick="bandNote('mira')">MIRA · 미라</div>
+      <div class="band-chip" onclick="bandNote('zoey')">ZOEY · 조이</div>
+    </div>
+    <button class="cta-btn" onclick="goGame()"><span>✦ ENTER THE HONMOON ✦</span></button>
+    <div style="font-size:9px;color:rgba(255,215,0,.25);letter-spacing:3px;margin-top:14px;text-align:center;">
+      황금의 노래가 울려 퍼질 때 마귀의 봉인이 풀린다
+    </div>
+  </div>
+</div>
+
+<!-- ======= GAME ======= -->
+<div id="game" class="screen">
+  <div class="game-header">
+    <h2>✦ GOLDEN — SING-ALONG ✦</h2>
+    <p>SING VERSE 1 TO UNLOCK YOUR INVITATION · 황금의 노래를 불러라</p>
+  </div>
+  <div class="stage-wrap"><canvas id="stageCanvas"></canvas></div>
+  <div class="lyrics-box">
+    <div style="text-align:center;margin-bottom:16px;">
+      <span style="font-size:9px;letter-spacing:5px;color:rgba(255,215,0,.35);">VERSE 1 · RUMI, ZOEY &amp; MIRA · HUNTRIX / HUNTR/X</span>
+    </div>
+    <div class="lyric-line active" id="L0">
+      I was a ghost, I was alone
+      <span class="kor">어두워진 앞길속에</span>
+    </div>
+    <div class="lyric-line" id="L1">
+      Given the throne, I didn't know how to believe
+      <span class="kor">내가 받을 자격이 있는지 몰랐어</span>
+    </div>
+    <div class="lyric-line" id="L2">
+      I lived two lives, tried to play both sides
+      <span class="kor">두 세계 사이에서 살았어</span>
+    </div>
+    <div class="lyric-line" id="L3">
+      But now that's how I'm getting paid — 끝없이 on stage
+      <span class="kor">이제 이 무대가 내 것이야</span>
+    </div>
+    <div class="line-timer"><div class="line-timer-fill" id="lineTimerFill"></div></div>
+    <div class="vol-bars" id="gameViz" style="margin-top:12px;">
+      <div class="vol-bar" style="height:3px"></div><div class="vol-bar" style="height:5px"></div>
+      <div class="vol-bar" style="height:8px"></div><div class="vol-bar" style="height:4px"></div>
+      <div class="vol-bar" style="height:12px"></div><div class="vol-bar" style="height:7px"></div>
+      <div class="vol-bar" style="height:5px"></div><div class="vol-bar" style="height:10px"></div>
+      <div class="vol-bar" style="height:15px"></div><div class="vol-bar" style="height:8px"></div>
+      <div class="vol-bar" style="height:11px"></div><div class="vol-bar" style="height:6px"></div>
+      <div class="vol-bar" style="height:9px"></div><div class="vol-bar" style="height:4px"></div>
+      <div class="vol-bar" style="height:13px"></div><div class="vol-bar" style="height:7px"></div>
+      <div class="vol-bar" style="height:5px"></div><div class="vol-bar" style="height:10px"></div>
+      <div class="vol-bar" style="height:3px"></div><div class="vol-bar" style="height:8px"></div>
+    </div>
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-label">HONMOON POWER · 황금 봉인 강도</div>
+    <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    <div class="tokens">
+      <div class="token" id="T0">👻</div>
+      <div class="token" id="T1">👑</div>
+      <div class="token" id="T2">⚔️</div>
+      <div class="token" id="T3">✦</div>
+    </div>
+  </div>
+  <div class="mic-wrap">
+    <div class="mic-outer">
+      <div class="mic-ring"></div><div class="mic-ring"></div><div class="mic-ring"></div>
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()">
+        <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+          <rect x="10" y="2" width="10" height="17" rx="5" fill="#FFD700"/>
+          <path d="M 5 15 Q 5 24 15 24 Q 25 24 25 15" stroke="#FFD700" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <line x1="15" y1="24" x2="15" y2="28" stroke="#FFD700" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="10" y1="28" x2="20" y2="28" stroke="#FFD700" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+    <div id="micStatus">TAP MIC · SING FOR ~3 SEC PER LINE</div>
+    <div class="hint">Press <strong style="color:rgba(255,215,0,.6)">SPACE</strong> to advance manually · Background music is silent while mic is active</div>
+  </div>
+</div>
+
+<!-- ======= VICTORY ======= -->
+<div id="victory" class="screen">
+  <canvas id="fxCanvas"></canvas>
+  <div class="v-wrap">
+    <div class="v-eyebrow">✦ THE GOLDEN HONMOON IS RISING ✦</div>
+    <div class="v-title">YOU ARE GOLDEN</div>
+    <div class="v-sub">황금빛이 되었습니다</div>
+    <div class="invite-card">
+      <div class="invite-body">
+        Your voice has awakened the seal.<br><br>
+        <span class="gold">RUMI · MIRA · ZOEY</span><br>
+        of <span class="gold">HUNTRIX / HUNTR/X</span><br>
+        hereby summon you to the<br><br>
+        <span class="gold" style="font-size:1.3em">KPOP DEMON HUNTERS</span><br>
+        <span class="dimgold">GOLDEN ERA SHOWCASE</span><br><br>
+        <span class="dimgold">
+          One night only · When the Honmoon turns gold<br>
+          "No more hiding. I'll be shining."<br>
+          Bring your voice. Leave your fear.
+        </span>
+      </div>
+      <svg class="seal-svg" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,215,0,.35)" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,215,0,.18)" stroke-width="1"/>
+        <polygon points="50,12 56,32 76,32 60,44 66,64 50,52 34,64 40,44 24,32 44,32" fill="rgba(255,215,0,.1)" stroke="rgba(255,215,0,.4)" stroke-width="1.2"/>
+        <text x="50" y="55" text-anchor="middle" font-size="15" fill="rgba(255,215,0,.55)">✦</text>
+        <path id="sp" d="M50,50 m-36,0 a36,36 0 1,1 72,0 a36,36 0 1,1 -72,0" fill="none"/>
+        <text font-family="'Noto Serif KR'" font-size="6.5" fill="rgba(255,215,0,.45)" letter-spacing=".5">
+          <textPath href="#sp">루미 GOLDEN HUNTRIX 황금 HUNTR/X ✦</textPath>
+        </text>
+      </svg>
+      <div class="code-box" id="inviteCode">GOLDEN-HUNTRIX-2025</div>
+    </div>
+    <button class="back-btn" onclick="restart()">↩ RETURN TO THE REALM</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   AUDIO ENGINE
+   No background music during mic — prevents feedback
+===================================================== */
+let AC = null;
+function getAC(){
+  if(!AC) AC = new (window.AudioContext||window.webkitAudioContext)();
+  return AC;
+}
+function note(freq,dur,type,vol,delay){
+  type=type||'sine'; vol=vol||0.2; delay=delay||0;
+  const ctx=getAC(), t=ctx.currentTime+delay;
+  const osc=ctx.createOscillator(), g=ctx.createGain();
+  osc.connect(g); g.connect(ctx.destination);
+  osc.type=type; osc.frequency.setValueAtTime(freq,t);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(0.001,t+dur);
+  osc.start(t); osc.stop(t+dur);
+}
+
+// Rumi "Golden" melody (approximate hook)
+function rumiSings(){
+  var m=[[392,.18],[440,.18],[494,.18],[523,.28],[494,.12],[440,.18],[392,.28],[349,.18],[392,.28],[523,.45],[494,.18],[440,.35]];
+  var t=0;
+  m.forEach(function(n){ note(n[0],n[1],'triangle',.22,t); t+=n[1]+.04; });
+  setTimeout(function(){ note(262,.5,'sine',.07,0); note(330,.5,'sine',.07,.2); note(392,.7,'sine',.05,.5); },200);
+  animateRumiSinging();
+}
+function animateRumiSinging(){
+  var e1=document.getElementById('eyeGlow1');
+  var e2=document.getElementById('eyeGlow2');
+  var mg=document.getElementById('micGlowEl');
+  if(e1) e1.setAttribute('stroke','rgba(200,0,100,0.7)');
+  if(e2) e2.setAttribute('stroke','rgba(200,0,100,0.7)');
+  if(mg){ mg.setAttribute('stroke','rgba(255,215,0,0.6)'); mg.setAttribute('opacity','1'); }
+  setTimeout(function(){
+    if(e1) e1.setAttribute('stroke','rgba(200,0,100,0)');
+    if(e2) e2.setAttribute('stroke','rgba(200,0,100,0)');
+    if(mg){ mg.setAttribute('stroke','rgba(255,215,0,0)'); mg.setAttribute('opacity','0'); }
+  },2500);
+}
+function bandNote(who){
+  if(who==='mira'){
+    [[523,.18,0],[587,.18,.22],[659,.28,.44],[698,.45,.72]].forEach(function(n){ note(n[0],n[1],'sine',.2,n[2]); });
+  } else {
+    [[784,.15,0],[880,.15,.18],[988,.25,.36],[880,.18,.64],[784,.3,.86]].forEach(function(n){ note(n[0],n[1],'triangle',.18,n[2]); });
+  }
+}
+
+/* =====================================================
+   BG PARTICLES
+===================================================== */
+var bgC=document.getElementById('bgCanvas');
+var bgX=bgC.getContext('2d');
+var bgPs=[];
+function resizeBg(){ bgC.width=innerWidth; bgC.height=innerHeight; }
+resizeBg(); window.addEventListener('resize',resizeBg);
+function spawnBgP(){ return {x:Math.random()*bgC.width,y:bgC.height+5,vx:(Math.random()-.5)*.4,vy:-(Math.random()*1.2+.3),life:1,r:Math.random()*2+.5,c:Math.random()>.5?'rgba(255,215,0,':'rgba(255,100,0,'}; }
+function bgLoop(){
+  bgX.clearRect(0,0,bgC.width,bgC.height);
+  if(Math.random()>.75) bgPs.push(spawnBgP());
+  bgPs=bgPs.filter(function(p){ return p.life>0; });
+  bgPs.forEach(function(p){ p.x+=p.vx; p.y+=p.vy; p.life-=.004; bgX.beginPath(); bgX.arc(p.x,p.y,p.r,0,Math.PI*2); bgX.fillStyle=p.c+p.life+')'; bgX.fill(); });
+  requestAnimationFrame(bgLoop);
+}
+bgLoop();
+
+// Petals
+var petalEmoji=['🌸','✿','❀'];
+function spawnPetal(){
+  var d=document.createElement('div'); d.className='petal'; d.textContent=petalEmoji[Math.floor(Math.random()*3)];
+  d.style.left=(Math.random()*100)+'vw';
+  d.style.animationDuration=(7+Math.random()*7)+'s';
+  d.style.animationDelay=(Math.random()*2)+'s';
+  document.getElementById('intro').appendChild(d);
+  setTimeout(function(){ d.remove(); },16000);
+}
+for(var i=0;i<18;i++) setTimeout(spawnPetal,i*250);
+setInterval(spawnPetal,900);
+
+// Runes
+var runeChars='鬼妖魔金歌力剑天龍神血霸'.split('');
+function spawnRune(){
+  var r=document.createElement('div'); r.className='rune';
+  r.textContent=runeChars[Math.floor(Math.random()*runeChars.length)];
+  r.style.left=(Math.random()*100)+'vw';
+  r.style.fontSize=(14+Math.random()*20)+'px';
+  r.style.animationDuration=(18+Math.random()*20)+'s';
+  r.style.animationDelay=(Math.random()*4)+'s';
+  document.body.appendChild(r);
+  setTimeout(function(){ r.remove(); },42000);
+}
+for(var ri=0;ri<10;ri++) spawnRune();
+setInterval(spawnRune,2500);
+
+/* =====================================================
+   SCREEN TRANSITIONS
+===================================================== */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); s.style.display='none'; s.style.opacity=''; });
+  var s=document.getElementById(id);
+  s.style.display='flex'; s.style.opacity='0';
+  requestAnimationFrame(function(){
+    s.classList.add('active');
+    var op=0; var fade=setInterval(function(){ op=Math.min(1,op+.06); s.style.opacity=op; if(op>=1) clearInterval(fade); },16);
+  });
+}
+
+function goGame(){
+  showScreen('game');
+  currentLine=0; isListening=false;
+  updateLyrics(); startStageAnim();
+}
+
+function restart(){
+  stopMic();
+  showScreen('intro');
+  currentLine=0;
+  for(var i=0;i<4;i++){
+    var el=document.getElementById('L'+i);
+    if(el) el.className='lyric-line'+(i===0?' active':'');
+  }
+  document.getElementById('progFill').style.width='0%';
+  for(var ti=0;ti<4;ti++){
+    var t=document.getElementById('T'+ti);
+    if(t) t.className='token';
+  }
+  document.getElementById('lineTimerFill').style.width='0%';
+}
+
+/* =====================================================
+   STAGE CANVAS
+===================================================== */
+var stageAF=null, stageNotePs=[], stageBeat=0;
+function startStageAnim(){
+  var cv=document.getElementById('stageCanvas');
+  if(!cv) return;
+  function frame(){
+    if(!document.getElementById('game').classList.contains('active')){ stageAF=null; return; }
+    cv.width=cv.offsetWidth*devicePixelRatio;
+    cv.height=cv.offsetHeight*devicePixelRatio;
+    var ctx=cv.getContext('2d'), W=cv.width, H=cv.height;
+    stageBeat+=.025;
+    ctx.clearRect(0,0,W,H);
+    var bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,'#10002a'); bg.addColorStop(1,'#040010');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+    // moon
+    ctx.save(); ctx.shadowBlur=30*devicePixelRatio; ctx.shadowColor='#ff6600';
+    ctx.beginPath(); ctx.arc(W/2,H*.22,H*.18,0,Math.PI*2);
+    var mg2=ctx.createRadialGradient(W/2-H*.05,H*.18,0,W/2,H*.22,H*.18);
+    mg2.addColorStop(0,'#ffcc44'); mg2.addColorStop(.4,'#cc3300'); mg2.addColorStop(1,'#550000');
+    ctx.fillStyle=mg2; ctx.fill(); ctx.restore();
+    // spotlights
+    [[W*.2,'rgba(255,215,0,.1)'],[W*.5,'rgba(255,100,50,.08)'],[W*.8,'rgba(150,100,255,.08)']].forEach(function(sp){
+      var lg=ctx.createLinearGradient(sp[0],H,sp[0],0);
+      lg.addColorStop(0,sp[1]); lg.addColorStop(1,'transparent');
+      ctx.save(); ctx.fillStyle=lg;
+      ctx.beginPath(); ctx.moveTo(sp[0],H); ctx.lineTo(sp[0]-H*.2,0); ctx.lineTo(sp[0]+H*.2,0); ctx.closePath();
+      ctx.fill(); ctx.restore();
+    });
+    // floor
+    var fl=ctx.createLinearGradient(0,H*.82,0,H);
+    fl.addColorStop(0,'rgba(255,215,0,.12)'); fl.addColorStop(1,'transparent');
+    ctx.fillStyle=fl; ctx.fillRect(0,H*.82,W,H*.18);
+    // singer sway
+    var sway=Math.sin(stageBeat)*W*.012;
+    var sx=W/2+sway, sy=H*.82;
+    ctx.save(); ctx.shadowBlur=25*devicePixelRatio; ctx.shadowColor='rgba(255,200,0,.6)';
+    ctx.fillStyle='rgba(15,3,20,.95)';
+    ctx.beginPath(); ctx.ellipse(sx,sy-H*.28,W*.05,H*.2,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(sx-W*.05,sy-H*.14); ctx.lineTo(sx-W*.13,sy); ctx.lineTo(sx+W*.13,sy); ctx.lineTo(sx+W*.05,sy-H*.14); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.arc(sx,sy-H*.48,W*.038,0,Math.PI*2); ctx.fill();
+    ctx.shadowColor='rgba(120,0,200,.5)'; ctx.fillStyle='rgba(60,0,100,.9)';
+    ctx.beginPath(); ctx.ellipse(sx,sy-H*.5,W*.05,H*.08,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+    // mic arm
+    ctx.save(); ctx.strokeStyle='rgba(200,180,0,.5)'; ctx.lineWidth=2*devicePixelRatio;
+    ctx.beginPath(); ctx.moveTo(sx+W*.04,sy-H*.42); ctx.lineTo(sx+W*.08,sy-H*.5); ctx.stroke(); ctx.restore();
+    // notes
+    if(Math.random()>.82) stageNotePs.push({x:sx+(Math.random()-.5)*W*.1,y:sy-H*.45,vy:-(Math.random()*.8+.4)*devicePixelRatio*1.5,vx:(Math.random()-.5)*.5*devicePixelRatio,life:1,ch:['♪','♫','♬','♩'][Math.floor(Math.random()*4)]});
+    stageNotePs=stageNotePs.filter(function(p){ return p.life>0; });
+    stageNotePs.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy; p.life-=.012;
+      ctx.save(); ctx.globalAlpha=p.life;
+      ctx.fillStyle='hsl('+(42+Math.sin(stageBeat)*15)+',100%,65%)';
+      ctx.font=((12+p.life*8)*devicePixelRatio)+'px serif'; ctx.fillText(p.ch,p.x,p.y); ctx.restore();
+    });
+    // crowd
+    ctx.fillStyle='rgba(10,0,20,.95)';
+    for(var ci=0;ci<22;ci++){
+      var cx2=W*(ci/22)+W*.025, bob=Math.sin(stageBeat*1.3+ci*.4)*H*.012;
+      ctx.beginPath(); ctx.arc(cx2,H-.012*H+bob,W*.018,0,Math.PI*2); ctx.fill();
+      ctx.fillRect(cx2-W*.01,H*.95+bob,W*.02,H*.05);
+    }
+    stageAF=requestAnimationFrame(frame);
+  }
+  if(stageAF) cancelAnimationFrame(stageAF);
+  frame();
+}
+
+/* =====================================================
+   VOICE DETECTION — FIXED
+   Key fixes:
+   1. RMS threshold lowered to 0.006
+   2. Cumulative timing: gaps < 500ms don't reset progress
+   3. Analyser NOT connected to destination (no feedback)
+   4. echoCancellation + noiseSuppression enabled
+===================================================== */
+var currentLine=0, TOTAL=4;
+var isListening=false, demoMode=false;
+var micStream=null, analyser=null;
+var lineHeld=0;          // cumulative ms of voice for current line
+var NEEDED_MS=2800;      // ms of voice needed to advance (2.8 seconds)
+var lastVoiceTime=null;  // last timestamp voice was detected
+var rafMic=null;
+var demoIntervalId=null;
+var demoBarsAF=null;
+
+async function toggleMic(){
+  if(isListening){ stopMic(); return; }
+  await startMic();
+}
+
+async function startMic(){
+  if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+    try{
+      micStream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:false}});
+      var ctx=getAC();
+      if(ctx.state==='suspended') await ctx.resume();
+      var src=ctx.createMediaStreamSource(micStream);
+      analyser=ctx.createAnalyser();
+      analyser.fftSize=1024;
+      analyser.smoothingTimeConstant=0.4;
+      src.connect(analyser);
+      // CRITICAL: do NOT connect analyser to destination — prevents ting ting feedback
+      isListening=true; demoMode=false;
+      setMicUI(true,'🎤 LISTENING — SING NOW! 노래하세요');
+      lineHeld=0; lastVoiceTime=null;
+      rafMic=requestAnimationFrame(detectLoop);
+      return;
+    } catch(e){ console.warn('Mic error:',e); }
+  }
+  // fallback demo
+  startDemo();
+}
+
+function stopMic(){
+  isListening=false; demoMode=false;
+  if(micStream){ micStream.getTracks().forEach(function(t){ t.stop(); }); micStream=null; }
+  if(rafMic){ cancelAnimationFrame(rafMic); rafMic=null; }
+  if(demoIntervalId){ clearInterval(demoIntervalId); demoIntervalId=null; }
+  if(demoBarsAF){ cancelAnimationFrame(demoBarsAF); demoBarsAF=null; }
+  setMicUI(false,'TAP MIC · SING FOR ~3 SEC PER LINE');
+  document.querySelectorAll('#gameViz .vol-bar').forEach(function(b){ b.style.height='3px'; b.style.background='var(--gold)'; });
+  lineHeld=0; lastVoiceTime=null;
+  document.getElementById('lineTimerFill').style.width='0%';
+}
+
+function setMicUI(on,msg){
+  var btn=document.getElementById('micBtn');
+  btn.classList.toggle('on',on);
+  var st=document.getElementById('micStatus');
+  st.textContent=msg||'';
+  st.style.color=on?'rgba(0,255,204,0.85)':'rgba(255,215,0,0.45)';
+}
+
+function detectLoop(timestamp){
+  if(!isListening||!analyser) return;
+  var buf=new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  // RMS
+  var sum=0;
+  for(var i=0;i<buf.length;i++) sum+=buf[i]*buf[i];
+  var rms=Math.sqrt(sum/buf.length);
+
+  // Update visualizer bars using frequency data
+  var freq=new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(freq);
+  var bars=document.querySelectorAll('#gameViz .vol-bar');
+  bars.forEach(function(b,idx){
+    var fi=Math.floor(idx*freq.length/bars.length);
+    var h=(freq[fi]/255)*44+2;
+    b.style.height=h+'px';
+    b.style.background=rms>0.006?'var(--teal)':'var(--gold)';
+  });
+
+  var now=performance.now();
+  var THRESHOLD=0.006; // Very sensitive — picks up quiet humming
+
+  if(rms>THRESHOLD){
+    if(lastVoiceTime!==null){
+      var elapsed=now-lastVoiceTime;
+      // Only count gaps up to 500ms (natural breathing/pauses)
+      if(elapsed<500) lineHeld+=elapsed;
+    }
+    lastVoiceTime=now;
+  } else {
+    // If silence >500ms, stop counting but KEEP accumulated progress
+    if(lastVoiceTime!==null && (now-lastVoiceTime)>500){
+      lastVoiceTime=null;
+    }
+  }
+
+  // Update timer bar
+  var pct=Math.min(100,(lineHeld/NEEDED_MS)*100);
+  document.getElementById('lineTimerFill').style.width=pct+'%';
+
+  if(lineHeld>=NEEDED_MS){
+    lineHeld=0; lastVoiceTime=null;
+    document.getElementById('lineTimerFill').style.width='0%';
+    advance();
+    if(currentLine>=TOTAL){ stopMic(); setTimeout(showVictory,900); }
+  }
+
+  if(isListening) rafMic=requestAnimationFrame(detectLoop);
+}
+
+function startDemo(){
+  demoMode=true; isListening=true;
+  setMicUI(true,'🎵 DEMO MODE — PLAYING...');
+  lineHeld=0;
+  demoBarsLoop();
+  demoIntervalId=setInterval(function(){
+    if(!isListening){ clearInterval(demoIntervalId); return; }
+    advance();
+    if(currentLine>=TOTAL){ stopMic(); setTimeout(showVictory,900); }
+  },3200);
+}
+
+function demoBarsLoop(){
+  if(!isListening||!demoMode) return;
+  var t=performance.now()*.003;
+  document.querySelectorAll('#gameViz .vol-bar').forEach(function(b,i){
+    var h=4+Math.abs(Math.sin(t+i*.55)*40)+Math.random()*6;
+    b.style.height=h+'px'; b.style.background='var(--teal)';
+  });
+  // animate line timer
+  lineHeld=Math.min(NEEDED_MS,lineHeld+55);
+  var pct=Math.min(100,(lineHeld/NEEDED_MS)*100);
+  document.getElementById('lineTimerFill').style.width=pct+'%';
+  if(lineHeld>=NEEDED_MS) lineHeld=0;
+  demoBarsAF=requestAnimationFrame(demoBarsLoop);
+}
+
+function advance(){
+  if(currentLine>=TOTAL) return;
+  var tones=[523,659,784,1046];
+  note(tones[currentLine],.4,'triangle',.18,0);
+  note(tones[currentLine]*1.5,.25,'sine',.1,.2);
+  currentLine++;
+  updateLyrics();
+}
+
+function updateLyrics(){
+  for(var i=0;i<TOTAL;i++){
+    var el=document.getElementById('L'+i);
+    if(!el) continue;
+    el.className='lyric-line';
+    if(i<currentLine) el.classList.add('done');
+    else if(i===currentLine) el.classList.add('active');
+  }
+  document.getElementById('progFill').style.width=(currentLine/TOTAL*100)+'%';
+  for(var i=0;i<4;i++){
+    var t=document.getElementById('T'+i);
+    if(t) t.className='token'+(i<currentLine?' lit':'');
+  }
+}
+
+// SPACE advance
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space' && document.getElementById('game').classList.contains('active')){
+    e.preventDefault(); lineHeld=0; lastVoiceTime=null; advance();
+    if(currentLine>=TOTAL){ stopMic(); setTimeout(showVictory,900); }
+  }
+});
+
+/* =====================================================
+   VICTORY
+===================================================== */
+function showVictory(){
+  showScreen('victory');
+  playFanfare(); launchFx();
+  var codes=['GOLDEN-HUNTRIX-VIP','HONMOON-RUMI-2025','KPDH-GOLD-PASS','HUNTRIX-FOREVER'];
+  document.getElementById('inviteCode').textContent=codes[Math.floor(Math.random()*4)];
+}
+
+function playFanfare(){
+  [[523,0],[659,.2],[784,.4],[1046,.7],[784,1.0],[1046,1.2],[1568,1.5]].forEach(function(n){ note(n[0],.5,'triangle',.25,n[1]); });
+  [[261,.8],[330,1],[392,1.4]].forEach(function(n){ note(n[0],1.2,'sine',.06,n[1]); });
+}
+
+function launchFx(){
+  var cv=document.getElementById('fxCanvas');
+  cv.width=innerWidth; cv.height=innerHeight;
+  var ctx=cv.getContext('2d'), fws=[];
+  function FW(){ this.x=Math.random()*cv.width; this.y=cv.height; this.tx=Math.random()*cv.width; this.ty=50+Math.random()*cv.height*.55; this.c='hsl('+(Math.random()*60+30)+',100%,65%)'; var dx=this.tx-this.x,dy=this.ty-this.y,dist=Math.sqrt(dx*dx+dy*dy),sp=4+Math.random()*4; this.vx=dx/dist*sp; this.vy=dy/dist*sp; this.done=false; this.pts=null; }
+  function explode(x,y,c){ var ps=[]; for(var i=0;i<55;i++){ var a=(i/55)*Math.PI*2,sp=1.5+Math.random()*5; ps.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,c:c}); } return ps; }
+  var intv=setInterval(function(){ if(fws.length<10) fws.push(new FW()); },350);
+  var running=true;
+  function frame(){
+    if(!running){ ctx.clearRect(0,0,cv.width,cv.height); return; }
+    ctx.fillStyle='rgba(0,0,0,.14)'; ctx.fillRect(0,0,cv.width,cv.height);
+    fws.forEach(function(fw,fi){
+      if(!fw.done){ fw.x+=fw.vx; fw.y+=fw.vy; ctx.beginPath(); ctx.arc(fw.x,fw.y,3,0,Math.PI*2); ctx.fillStyle=fw.c; ctx.shadowColor=fw.c; ctx.shadowBlur=8; ctx.fill(); if(Math.abs(fw.x-fw.tx)<12&&Math.abs(fw.y-fw.ty)<12){ fw.done=true; fw.pts=explode(fw.x,fw.y,fw.c); } }
+      else if(fw.pts){ fw.pts=fw.pts.filter(function(p){ return p.life>0; }); fw.pts.forEach(function(p){ p.x+=p.vx; p.y+=p.vy; p.vy+=.07; p.life-=.013; ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.globalAlpha=p.life; ctx.fillStyle=p.c; ctx.shadowColor=p.c; ctx.shadowBlur=6; ctx.fill(); ctx.globalAlpha=1; }); if(!fw.pts.length) fws.splice(fi,1); }
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
+  setTimeout(function(){ running=false; clearInterval(intv); },10000);
+}
+</script>
+</body>
+</html>
